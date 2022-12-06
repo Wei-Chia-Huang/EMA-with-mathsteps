@@ -1,6 +1,8 @@
 const mathsteps = require('mathsteps');
 const print = require('mathsteps/lib/util/print');
 
+const Template = require('./ChooseTemplate.js');
+
 function isEquation(mathInput) {
     const comparators = ['<=', '>=', '=', '<', '>'];
     let isEquation = false;
@@ -15,12 +17,13 @@ function isEquation(mathInput) {
 
 function renderStep(step, isEquationFlag) {
     var StepsText = "";
+    var CommandText = Template.formatChange(step) + '\n';
 
     StepsText += isEquationFlag
         ? step.newEquation.ascii() + '\n'
         : print.ascii(step.newNode) + '\n';
 
-    return StepsText;
+    return CommandText;
 }
 
 function steps(input) {
@@ -29,15 +32,16 @@ function steps(input) {
         ? mathsteps.solveEquation(input)
         : mathsteps.simplifyExpression(input);
 
-    let StepsText = isEquationFlag
+    var CommandText = "";
+    var StepsText = isEquationFlag
         ? steps[0].oldEquation.ascii() + '\n'
         : print.ascii(steps[0].oldNode) + '\n';
 
     steps.forEach(step => {
-        StepsText += renderStep(step, isEquationFlag);
+        CommandText += renderStep(step, isEquationFlag);
     });
 
-    return StepsText;
+    return CommandText;
 }
 
 module.exports.init = function(input) {
