@@ -93,20 +93,20 @@ function nodesToString(nodes, duplicates=false) {
 }
 
 function combineTemplate(values, solveType) {
-    let commandText = "";
+    let commandText = [];
     
     switch (solveType) {
         case 'sequence': {
-            let ans = Number(values[0]);
+            let ans = values[0];
 
             for (let i = 1; i < values.length; i++) {
-                if (values[i].includes('-')) {
-                    commandText += "SubTemplate.py (" + ans + "," + values[i] + ")\n";
+                if (values[i] < 0) {
+                    commandText.push(["sub", [ans, Math.abs(values[i])]]);
                 }
                 else {
-                    commandText += "AddTemplate.py (" + ans + "," + values[i] + ")\n";
+                    commandText.push(["add", [ans, values[i]]]);
                 }
-                ans = ans + Number(values[i]);
+                ans = ans + values[i];
             }
             break;
         }
@@ -116,40 +116,47 @@ function combineTemplate(values, solveType) {
             let negativeValsArr = [];
 
             values.forEach(value => {
-                if (value.includes('-')) {
+                if (value < 0) {
                     haveNegative = true;
-                    negativeValsArr.push(value);
+                    negativeValsArr.push(Math.abs(value));
                 }
                 else {
                     positiveValsArr.push(value);
                 }
             });
+
+            let positiveSum = 0;
+            positiveValsArr.forEach(positiveVal => {
+                positiveSum = positiveSum + positiveVal;
+            });
+
+            let negativeSum = 0;
+            negativeValsArr.forEach(negativeVal => {
+                negativeSum = negativeSum + negativeVal;
+            });
         
             if (haveNegative) {
-                let positiveSum = "positiveSum";
-                let negativeSum = "negativeSum";
-                
                 if (values.length === 2) {
-                    commandText = "SubTemplate.py (" + values + ")";
+                    commandText.push(["sub", values]);
                 }
                 else if (values.length === 3) {
                     if (positiveValsArr.length === 1){
-                        commandText += "AddTemplate.py (" + negativeValsArr + ")\n";
-                        commandText += "SubTemplate.py (" + positiveValsArr + ", " + negativeSum + ")";
+                        commandText.push(["add", negativeValsArr]);
+                        commandText.push(["sub", [positiveValsArr, negativeSum]]);
                     }
                     else {
-                        commandText += "AddTemplate.py (" + positiveValsArr + ")\n";
-                        commandText += "SubTemplate.py (" + positiveSum + ", " + negativeValsArr + ")";
+                        commandText.push(["add", positiveValsArr]);
+                        commandText.push(["sub", [positiveSum, negativeValsArr]]);
                     }
                 }
                 else {
-                    commandText += "Addtemplate.py (" + positiveValsArr + ")\n";
-                    commandText += "AddTemplate.py (" + negativeValsArr + ")\n";
-                    commandText += "SubTemplate.py (" + positiveSum + ", " + negativeSum + ")";
+                    commandText.push(["add", positiveValsArr]);
+                    commandText.push(["add", negativeValsArr]);
+                    commandText.push(["sub", [positiveSum, negativeSum]]);
                 }
             }
             else {
-                commandText = "AddTemplate.py (" + values + ")";
+                commandText.push(["add", values]);
             }
             break;
         }
@@ -180,7 +187,7 @@ Template.templateFormatFunctionMap[ChangeTypes.COLLECT_AND_COMBINE_LIKE_TERMS] =
     
     before.forEach(value => {
         if (!isNaN(value))
-            combineValsArr.push(value);
+            combineValsArr.push(Number(value));
     });
 
     return combineTemplate(combineValsArr, 'sequence');
@@ -219,14 +226,17 @@ Template.templateFormatFunctionMap[ChangeTypes.SIMPLIFY_ARITHMETIC] = function(s
 
     const before = nodesToString(opNode.args, true);
     const after = newNodes[0].toTex();
+    var values = before.map(function(value) {
+        return Number(value);
+    });
     
     switch (OP_TO_STRING[opNode.op]) {
         case 'Combine': 
-            return combineTemplate(before, 'sequence');
+            return combineTemplate(values, 'sequence');
         case 'Multiply': 
-            return 'MulTemplate.py (' + before + ')';
+            return ["mul", values];
         case 'Divide': 
-            return 'DivTemplate.py (' + before + ')';
+            return ["div", values];
         default: 
             return null;
     }

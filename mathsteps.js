@@ -17,7 +17,7 @@ function isEquation(mathInput) {
 
 function renderStep(step, isEquationFlag) {
     var StepsText = "";
-    var CommandText = Template.formatChange(step) + '\n';
+    var CommandText = Template.formatChange(step);
 
     StepsText += isEquationFlag
         ? step.newEquation.ascii() + '\n'
@@ -32,14 +32,16 @@ function steps(input) {
         ? mathsteps.solveEquation(input)
         : mathsteps.simplifyExpression(input);
 
-    var CommandText = "";
+    var CommandText = [];
     var StepsText = isEquationFlag
         ? steps[0].oldEquation.ascii() + '\n'
         : print.ascii(steps[0].oldNode) + '\n';
 
     steps.forEach(step => {
-        CommandText += renderStep(step, isEquationFlag);
+        CommandText.push(renderStep(step, isEquationFlag));
     });
+
+    CommandText.push(['ans', [Number(print.ascii(steps[steps.length - 1].newNode))]]);
 
     return CommandText;
 }
