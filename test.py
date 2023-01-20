@@ -7,7 +7,7 @@ def js_from_file(file_name):
     
     return result
 
-input = '123 + 456 - 66 + 77 - 83'
+input = '( 23 + 35 ) * 2 - 11'
 
 # 編譯加載 JS 文件
 mathsteps = execjs.compile(js_from_file('./mathsteps.js'))

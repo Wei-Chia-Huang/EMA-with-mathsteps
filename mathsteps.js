@@ -1,7 +1,7 @@
 const mathsteps = require('mathsteps');
 const print = require('mathsteps/lib/util/print');
 
-const Template = require('./ChooseTemplate.js');
+const Template = require('./RuleTable.js');
 
 function isEquation(mathInput) {
     const comparators = ['<=', '>=', '=', '<', '>'];
@@ -13,6 +13,26 @@ function isEquation(mathInput) {
     });
 
     return isEquation;
+}
+
+function getDepth(arr) {
+    var list = [];
+    var num = 0;
+
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] instanceof Array) {
+            for (let j = 0; j < arr[i].length; j++) {
+                list.push(arr[i][j]);
+            }
+        }
+    }
+
+    if (list.length) {
+        num = 1;
+        num += getDepth(list);
+    }
+
+    return num;
 }
 
 function renderStep(step, isEquationFlag) {
@@ -38,7 +58,18 @@ function steps(input) {
         : print.ascii(steps[0].oldNode) + '\n';
 
     steps.forEach(step => {
-        CommandText.push(renderStep(step, isEquationFlag));
+        var command = renderStep(step, isEquationFlag);
+        var commandDepth = getDepth(command);
+
+        if (commandDepth === 1) {
+            CommandText.push(command);
+        }
+        else if (commandDepth === 2){
+            for (let i = 0; i < command.length; i++) {
+                CommandText.push(command[i]);
+            }
+        }
+        // CommandText.push(renderStep(step, isEquationFlag));
     });
 
     CommandText.push(['ans', [Number(print.ascii(steps[steps.length - 1].newNode))]]);
