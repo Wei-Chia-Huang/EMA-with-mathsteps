@@ -1,3 +1,35 @@
+# [ 0120 ] Debug combine return data
+
+## 文件說明：
+
+### 修改檔名：
+
+ ~~ChooseTemplate.js~~ ➡️ RuleTable.js
+
+### mathsteps.js 新增讀取陣列維度的函式
+
+```jsx
+function getDepth(arr) {
+    var list = [];
+    var num = 0;
+
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] instanceof Array) {
+            for (let j = 0; j < arr[i].length; j++) {
+                list.push(arr[i][j]);
+            }
+        }
+    }
+
+    if (list.length) {
+        num = 1;
+        num += getDepth(list);
+    }
+
+    return num;
+}
+```
+
 # [ 0105 ] 將回傳資料符合規則表
 
 ## 文件說明：
