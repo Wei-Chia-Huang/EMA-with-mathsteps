@@ -169,6 +169,18 @@ function combineTemplate(values, solveType) {
     return commandText;
 }
 
+function multiplyTemplate(values) {
+    let commandText = [];
+    let ans = values[0];
+
+    for (let i = 1; i < values.length; i++) {
+        commandText.push(["mul", [ans, values[i]]]);
+        ans = ans * values[i];
+    }
+
+    return commandText;
+}
+
 // e.g. 1 + 2 * 5 + 3 -> 4 + 2 * 5
 Template.templateFormatFunctionMap[ChangeTypes.COLLECT_AND_COMBINE_LIKE_TERMS] = function(step) {
     const oldNodes = getOldChangeNodes(step);
@@ -193,6 +205,38 @@ Template.templateFormatFunctionMap[ChangeTypes.COLLECT_AND_COMBINE_LIKE_TERMS] =
     return combineTemplate(combineValsArr, 'sequence');
 }
 
+// e.g. (2 * 3)(x * x) -> 6(x*x)
+Template.templateFormatFunctionMap[ChangeTypes.MULTIPLY_COEFFICIENTS] = function(step) {
+    const oldNodes = getOldChangeNodes(step);
+    const newNodes = getNewChangeNodes(step);
+    if (oldNodes.length !== 1 || newNodes.length !== 1) {
+        return null;
+    }
+
+    const opNode = oldNodes[0];
+    if (!NodeType.isOperator(opNode) || '+-*/^'.indexOf(opNode.op) === -1) {
+        return null;
+    }
+
+    const before = nodesToString(opNode.args, true);
+    const after = newNodes[0].toTex();
+
+    var values = before.map(function(value) {
+        return Number(value);
+    });
+
+    switch (OP_TO_STRING[opNode.op]) {
+        case 'Combine': 
+            return combineTemplate(values, 'sequence');
+        case 'Multiply': 
+            return multiplyTemplate(values);
+        case 'Divide': 
+            return ["div", values];
+        default: 
+            return null;
+    }
+};
+
 // e.g. 1/2 * 2/3 -> 2/6
 Template.templateFormatFunctionMap[ChangeTypes.MULTIPLY_FRACTIONS] = function(step) {
     const oldNodes = getOldChangeNodes(step);
@@ -208,7 +252,11 @@ Template.templateFormatFunctionMap[ChangeTypes.MULTIPLY_FRACTIONS] = function(st
 
     const before = nodesToString(opNode.args, true);
     const after = newNodes[0].toTex();
-    return "Multiply " + before + " to get " + after;
+    var values = before.map(function(value) {
+        return Number(value);
+    });
+
+    return ["mul", values];
 };
 
 // e.g. 2 + 2 -> 4 or 2 * 2 -> 4
@@ -234,7 +282,7 @@ Template.templateFormatFunctionMap[ChangeTypes.SIMPLIFY_ARITHMETIC] = function(s
         case 'Combine': 
             return combineTemplate(values, 'sequence');
         case 'Multiply': 
-            return ["mul", values];
+            return multiplyTemplate(values);
         case 'Divide': 
             return ["div", values];
         default: 

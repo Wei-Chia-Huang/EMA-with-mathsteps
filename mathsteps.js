@@ -3,6 +3,7 @@ const print = require('mathsteps/lib/util/print');
 
 const Template = require('./RuleTable.js');
 
+// 判斷問題是否為方程式
 function isEquation(mathInput) {
     const comparators = ['<=', '>=', '=', '<', '>'];
     let isEquation = false;
@@ -15,6 +16,7 @@ function isEquation(mathInput) {
     return isEquation;
 }
 
+// 取得陣列維度
 function getDepth(arr) {
     var list = [];
     var num = 0;
@@ -35,6 +37,7 @@ function getDepth(arr) {
     return num;
 }
 
+// 生成步驟
 function renderStep(step, isEquationFlag) {
     var StepsText = "";
     var CommandText = Template.formatChange(step);
@@ -46,6 +49,35 @@ function renderStep(step, isEquationFlag) {
     return CommandText;
 }
 
+// 生成子步驟
+function renderSubstep(steps, isEquationFlag) {
+    var CommandText = [];
+
+    steps.forEach(step => {
+        const substeps = step.substeps;
+        if (substeps.length === 0) {
+            var command = Template.formatChange(step);
+        }
+        else {
+            var command = renderSubstep(substeps, isEquationFlag);
+        }
+
+        var commandDepth = getDepth(command);
+
+        if (commandDepth === 1) {
+            CommandText.push(command);
+        }
+        else if (commandDepth === 2){
+            for (let i = 0; i < command.length; i++) {
+                CommandText.push(command[i]);
+            }
+        }
+    });
+
+    return CommandText;
+}
+
+// 取得所有步驟
 function steps(input) {
     const isEquationFlag = isEquation(input);
     const steps = isEquationFlag
@@ -58,7 +90,16 @@ function steps(input) {
         : print.ascii(steps[0].oldNode) + '\n';
 
     steps.forEach(step => {
-        var command = renderStep(step, isEquationFlag);
+        const substeps = step.substeps;
+        console.log(substeps.length);
+        if (substeps.length === 0) {
+            var command = renderStep(step, isEquationFlag);
+        }
+        else {
+            var command = renderSubstep(substeps, isEquationFlag );
+            // var command = ["test", [123]];
+        }
+        
         var commandDepth = getDepth(command);
 
         if (commandDepth === 1) {
