@@ -16,9 +16,9 @@ mathsteps = execjs.compile(js_from_file('./mathsteps.js'))
 # 呼叫 JS 裡面的方法
 StepsText = mathsteps.call('steps', input)
 
-# 決定每個步驟（step）的分類標籤
-for step in StepsText[:-1]:
-    step_solution = Node(step)
-    step.append(step_solution.classify())
+# 將步驟由 list 轉換成物件（object），並決定每個步驟的分類標籤
+for i in range(len(StepsText)):
+    StepsText[i] = Node(StepsText[i])
+    print([StepsText[i].operator, StepsText[i].values, StepsText[i].solutions])
 
 print(StepsText)

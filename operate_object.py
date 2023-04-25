@@ -9,22 +9,22 @@ import unicodedata
 class Node():
     def __init__(self, step):
         self.operator = step[0]
-        self.LeftValue = str(step[1][0])
-        self.RightValue = str(step[1][1])
+        self.values = step[1]
+        self.solutions = self.classify()
         # self.__preprocessing(question)  # 將輸入預處理
     
     # 根據物件的 self.operator 來決定分類方式，並回傳分類結果
     def classify(self):
-        # if "." in self.LeftValue or "." in self.RightValue:
-        #     return decimal_operation_classify(self.operator, self.LeftValue, self.RightValue)
-        if self.operator == "add":
-            return addition_classify(self.LeftValue, self.RightValue)
+        if self.operator == "ans":
+            return None
+        elif self.operator == "add":
+            return addition_classify(str(self.values[0]), str(self.values[1]))
         elif self.operator == "sub":
-            return subtraction_classify(self.LeftValue, self.RightValue)
+            return subtraction_classify(str(self.values[0]), str(self.values[1]))
         elif self.operator == "mul":
-            return multiplication_classify(self.LeftValue, self.RightValue)
+            return multiplication_classify(str(self.values[0]), str(self.values[1]))
         elif self.operator == "div":
-            return division_classify(self.LeftValue, self.RightValue)
+            return division_classify(str(self.values[0]), str(self.values[1]))
 
     # 將輸入預處理，建立此物件的屬性
     def __preprocessing(self, question):
