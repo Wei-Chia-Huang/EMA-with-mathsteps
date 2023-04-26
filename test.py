@@ -18,7 +18,7 @@ StepsText = mathsteps.call('steps', input)
 
 # 將步驟由 list 轉換成物件（object），並決定每個步驟的分類標籤
 for i in range(len(StepsText)):
-    StepsText[i] = Node(StepsText[i])
-    print([StepsText[i].operator, StepsText[i].values, StepsText[i].solutions])
+    StepsText[i] = Step(StepsText[i])
+    print([StepsText[i].operator, StepsText[i].values, StepsText[i].strategies])
 
 print(StepsText)

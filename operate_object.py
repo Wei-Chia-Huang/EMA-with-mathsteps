@@ -6,11 +6,11 @@ from division_classify import division_classify
 
 import unicodedata
 
-class Node():
+class Step():
     def __init__(self, step):
         self.operator = step[0]
         self.values = step[1]
-        self.solutions = self.classify()
+        self.strategies = self.classify()
         # self.__preprocessing(question)  # 將輸入預處理
     
     # 根據物件的 self.operator 來決定分類方式，並回傳分類結果
