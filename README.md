@@ -20,7 +20,7 @@
 ]
 ```
 
-### 修改後的資料型態 — 物件 list
+### 修改後的資料型態 — 物件 list（位於 branch：return_object）
 
 優點：各步驟根據 Step 類別（class）建立物件（object），透過物件的屬性（attribute），可以方便查找各步驟所需資訊
 

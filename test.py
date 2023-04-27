@@ -8,7 +8,7 @@ def js_from_file(file_name):
     
     return result
 
-input = '(5 + 8) * (89 - 43 - 23) * 123 * 5' 
+input = '4 * 8 / 4' 
 
 # 編譯加載 JS 文件
 mathsteps = execjs.compile(js_from_file('./mathsteps.js'))
