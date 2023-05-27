@@ -1,8 +1,9 @@
 # 此程式會將乘法的分類結果回傳
 def multiplication_classify(value1, value2):
-    classify_tag = []
+    classify_result = {"tag": [], "strategy": None}
 
     # 建立分類規則的字典，用來迭代尋找符合的分類標籤
+    # 分類標籤須按學習階段由低到高排列（低年級 -> 高年級）
     classify_rule = {
         "0 和 1 的乘法": __multiplication_of_0_or_1,
         "十十乘法表": __ten_ten_multiplication_table,
@@ -16,15 +17,34 @@ def multiplication_classify(value1, value2):
         "大數乘法": __multiplication_of_large_numbers
     }
 
+    # 建立分類標籤所對應的詳解工具之字典
+    # 若有新增的分類標籤或詳解工具，請記得修改此字典
+    strategy_table = {
+        "橫式乘法": ["0 和 1 的乘法"],
+        "查表、橫式乘法": ["十十乘法表"],
+        "直式乘法": [
+            "二位數乘以一位數", "三位數乘以一位數", "乘數為一位數", "乘數為二位數", 
+            "二位數乘以三位數", "乘數為三位數", "末位是 0 的乘法", "大數乘法"
+        ]
+    }
+
     try:
+        # 迭代尋找符合的所有分類標籤
         for key in classify_rule:
             if classify_rule[key](value1, value2):
-                classify_tag.append(key)
+                classify_result["tag"].append(key)
 
-        return classify_tag
+        # 詳解工具由學習階段最早的分類標籤決定
+        for key in strategy_table:
+            if classify_result["tag"][0] in strategy_table[key]:
+                classify_result["strategy"] = key
+
+        return classify_result
     except Exception as err:
         print(err)
-        return "multiplication_classify.py 有 Bug, 須排除"
+        classify_result["tag"].append("multiplication_classify.py 有 Bug, 須排除")
+        classify_result["strategy"] = "因程式有錯誤，故無對應詳解工具"
+        return classify_result
 
 # 分類規則：0 和 1 的乘法
 def __multiplication_of_0_or_1(value1, value2):

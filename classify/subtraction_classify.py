@@ -1,8 +1,9 @@
 # 此程式會將減法的分類結果回傳
 def subtraction_classify(value1, value2):
-    classify_tag = []
+    classify_result = {"tag": [], "strategy": None}
 
     # 建立分類規則的字典，用來迭代尋找符合的分類標籤
+    # 分類標籤須按學習階段由低到高排列（低年級 -> 高年級）
     classify_rule = {
         "10 以內的減法": __less_than_10,
         "20 以內的減法": __less_than_20,
@@ -16,15 +17,34 @@ def subtraction_classify(value1, value2):
         "運算結果小於零": __ansewr_less_then_0
     }
 
+    # 建立分類標籤所對應的詳解工具之字典
+    # 若有新增的分類標籤或詳解工具，請記得修改此字典
+    strategy_table = {
+        "數數減法": ["10 以內的減法", "20 以內的減法"],
+        "直式減法": [
+            "二位數的減法（不退位）", "二位數的減法（有退位）", "三位數的減法（不退位）", 
+            "三位數的減法（有退位）", "四位數的減法", "十萬以內的減法", "大數減法"
+        ],
+        "無對應詳解工具": ["運算結果小於零"]
+    }
+
     try:
+        # 迭代尋找符合的所有分類標籤
         for key in classify_rule:
             if classify_rule[key](value1, value2):
-                classify_tag.append(key)
-        
-        return classify_tag
+                classify_result["tag"].append(key)
+
+        # 詳解工具由學習階段最早的分類標籤決定
+        for key in strategy_table:
+            if classify_result["tag"][0] in strategy_table[key]:
+                classify_result["strategy"] = key
+
+        return classify_result
     except Exception as err:
         print(err)
-        return "subtraction_classify.py 有 Bug, 須排除"
+        classify_result["tag"].append("subtraction_classify.py 有 Bug, 須排除")
+        classify_result["strategy"] = "因程式有錯誤，故無對應詳解工具"
+        return classify_result
 
 # 分類規則：10 以內的減法
 def __less_than_10(value1, value2):

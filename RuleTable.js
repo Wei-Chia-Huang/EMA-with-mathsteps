@@ -181,6 +181,19 @@ function multiplyTemplate(values) {
     return commandText;
 }
 
+Template.templateFormatFunctionMap[ChangeTypes.CANCEL_GCD] = function(step) {
+    const oldNodes = getOldChangeNodes(step);
+    const newNodes = getNewChangeNodes(step);
+    // if (oldNodes.length !== 1 || newNodes.length !== 1) {
+    //     return null;
+    // }
+
+    const before = nodesToString(oldNodes);
+    const after = nodesToString(newNodes);
+
+    return ["div", [before, after]];    
+}
+
 // e.g. 1 + 2 * 5 + 3 -> 4 + 2 * 5
 Template.templateFormatFunctionMap[ChangeTypes.COLLECT_AND_COMBINE_LIKE_TERMS] = function(step) {
     const oldNodes = getOldChangeNodes(step);
@@ -203,6 +216,19 @@ Template.templateFormatFunctionMap[ChangeTypes.COLLECT_AND_COMBINE_LIKE_TERMS] =
     });
 
     return combineTemplate(combineValsArr, 'sequence');
+}
+
+Template.templateFormatFunctionMap[ChangeTypes.FIND_GCD] = function(step) {
+    const oldNodes = getOldChangeNodes(step);
+    const newNodes = getNewChangeNodes(step);
+    // if (oldNodes.length !== 1 || newNodes.length !== 1) {
+    //     return null;
+    // }
+
+    const before = nodesToString(oldNodes);
+    const after = nodesToString(newNodes);
+
+    return ["div", [before, after]];
 }
 
 // e.g. (2 * 3)(x * x) -> 6(x*x)
@@ -300,12 +326,15 @@ Template.templateFormatFunctionMap[ChangeTypes.SIMPLIFY_FRACTION] = function(ste
 
     const before = nodesToString(oldNodes);
     const after = nodesToString(newNodes);
+    var values = before.map(function(value) {
+        return Number(value);
+    });
 
-    if (!isNaN(after)){
-        return 'DivTemplate.py (' + before + ')';
+    if (!isNaN(Number(after))){
+        return ["div", values];
     }
     else{
-        return step.changeType;
+        return [step.changeType];
     }
 };
 

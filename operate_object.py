@@ -1,7 +1,7 @@
-from addition_classify import addition_classify
-from subtraction_classify import subtraction_classify
-from multiplication_classify import multiplication_classify
-from division_classify import division_classify
+from classify.addition_classify import addition_classify
+from classify.subtraction_classify import subtraction_classify
+from classify.multiplication_classify import multiplication_classify
+from classify.division_classify import division_classify
 # from decimal_operation_classify import decimal_operation_classify
 
 import unicodedata
@@ -10,21 +10,26 @@ class Step():
     def __init__(self, step):
         self.operator = step[0]
         self.values = step[1]
-        self.strategies = self.classify()
+        self.classify_tag = None
+        self.strategy = None
+        self.__classify()  # 完成分類
         # self.__preprocessing(question)  # 將輸入預處理
     
-    # 根據物件的 self.operator 來決定分類方式，並回傳分類結果
-    def classify(self):
+    # 根據物件的 self.operator 來決定分類方式，並回傳分類結果與決策出的詳解工具
+    def __classify(self):
         if self.operator == "ans":
-            return None
+            classify_result = {"tag": None, "strategy": None}
         elif self.operator == "add":
-            return addition_classify(str(self.values[0]), str(self.values[1]))
+            classify_result = addition_classify(str(self.values[0]), str(self.values[1]))
         elif self.operator == "sub":
-            return subtraction_classify(str(self.values[0]), str(self.values[1]))
+            classify_result = subtraction_classify(str(self.values[0]), str(self.values[1]))
         elif self.operator == "mul":
-            return multiplication_classify(str(self.values[0]), str(self.values[1]))
+            classify_result = multiplication_classify(str(self.values[0]), str(self.values[1]))
         elif self.operator == "div":
-            return division_classify(str(self.values[0]), str(self.values[1]))
+            classify_result = division_classify(str(self.values[0]), str(self.values[1]))
+
+        self.classify_tag = classify_result["tag"]
+        self.strategy = classify_result["strategy"]
 
     # 將輸入預處理，建立此物件的屬性
     def __preprocessing(self, question):

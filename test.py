@@ -8,7 +8,7 @@ def js_from_file(file_name):
     
     return result
 
-input = '4 * 8 / 4' 
+input = '(5 + 8) * (89 - 43 - 23) * 123 * 5' 
 
 # 編譯加載 JS 文件
 mathsteps = execjs.compile(js_from_file('./mathsteps.js'))
@@ -16,9 +16,9 @@ mathsteps = execjs.compile(js_from_file('./mathsteps.js'))
 # 呼叫 JS 裡面的方法
 StepsText = mathsteps.call('steps', input)
 
-# 將步驟由 list 轉換成物件（object），並決定每個步驟的分類標籤
+# 將步驟由 list 轉換成物件（object），並決定每個步驟的分類標籤與詳解工具決策
 for i in range(len(StepsText)):
     StepsText[i] = Step(StepsText[i])
-    print([StepsText[i].operator, StepsText[i].values, StepsText[i].strategies])
+    print([StepsText[i].operator, StepsText[i].values, StepsText[i].strategy, StepsText[i].classify_tag])
 
 print(StepsText)

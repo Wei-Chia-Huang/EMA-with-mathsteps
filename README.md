@@ -1,3 +1,64 @@
+# [ 0526 ] 將修改後的 V-MATHER 分類器與 EMA_with_mathsteps 結合
+
+## EMA_with_mathsteps 檔案結構
+
+```python
+/EMA_with_mathsteps
+|-- __pycache__
+|-- test.py                             # 主程式
+|-- operate_object.py                   # 各種運算方式的類別（class）
+|-- classify
+    |-- addition_classify.py            # 兩正整數加法分類
+    |-- subtraction_classify.py         # 兩正整數減法分類
+    |-- multiplication_classify.py      # 兩正整數乘法分類
+    |-- divison_classify.py             # 兩正整數除法分類
+|-- mathsteps.js                        # 解題步驟產生器
+|-- NodeTypes.js                        # 解題步驟的資料型態
+|-- RuleTable.js                        # 規則表
+|-- test.ipynb                          # 程式碼測試
+|-- system_framework.png                # 系統架構圖
+|-- RuleTable.md                        # 規則表說明
+|-- README.md
+|-- 程式乾貨.docx
+```
+
+## 回傳的動畫參數（目前僅在分支 return_object 實作）
+
+### 以數學題目 `(5 + 8) * (89 - 43 - 23) * 123 * 5` 為例
+
+```python
+[步驟 1（object）, 步驟 2（object）, 步驟 3（object）, 步驟 4（object）,
+ 步驟 5（object）, 步驟 6（object）, 步驟 7（object）]
+```
+
+### Step 類別擁有的屬性如下
+
+```python
+class Step():
+    def __init__(self, step):
+        self.operator = step[0]   # 步驟的運算子   
+        self.values = step[1]     # 步驟擁有的參數
+        self.classify_tag = None  # 步驟的分類標籤
+        self.strategy = None      # 步驟合適的詳解工具
+        self.__classify()         # 預先完成分類
+```
+
+### 展開步驟 `[Step.operator, Step.values, Step.strategy, Step.classify_tag]`
+
+✨ 僅為了展示步驟資訊，實際呼叫時，可以直接查閱物件屬性
+
+```python
+[
+	['mul', [123, 5], '直式乘法', ['三位數乘以一位數', '乘數為一位數']],
+	['add', [5, 8], '數數加法', ['20 以內的加法', '十萬以內的加法']],
+	['sub', [89, 43], '直式減法', ['二位數的減法（不退位）', '十萬以內的減法']],
+	['sub', [46, 23], '直式減法', ['二位數的減法（不退位）', '十萬以內的減法']],
+	['mul', [615, 13], '直式乘法', ['乘數為二位數']],
+	['mul', [7995, 23], '直式乘法', ['乘數為二位數', '大數乘法']],
+	['ans', [183885], None, None]
+]
+```
+
 # [ 0426 ] 更改回傳的資料型態
 
 ## 回傳資料型態：
