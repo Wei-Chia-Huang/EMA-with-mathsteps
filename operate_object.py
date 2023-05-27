@@ -1,7 +1,7 @@
-from addition_classify import addition_classify
-from subtraction_classify import subtraction_classify
-from multiplication_classify import multiplication_classify
-from division_classify import division_classify
+from classify.addition_classify import addition_classify
+from classify.subtraction_classify import subtraction_classify
+from classify.multiplication_classify import multiplication_classify
+from classify.division_classify import division_classify
 # from decimal_operation_classify import decimal_operation_classify
 
 import unicodedata

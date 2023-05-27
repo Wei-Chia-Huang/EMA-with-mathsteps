@@ -1,3 +1,27 @@
+# [0527] 更改檔案結構 
+
+## EMA_with_mathsteps 檔案結構
+
+```python
+/EMA_with_mathsteps
+|-- __pycache__
+|-- test.py                             # 主程式
+|-- operate_object.py                   # 各種運算方式的類別（class）
+|-- classify
+    |-- addition_classify.py            # 兩正整數加法分類
+    |-- subtraction_classify.py         # 兩正整數減法分類
+    |-- multiplication_classify.py      # 兩正整數乘法分類
+    |-- divison_classify.py             # 兩正整數除法分類
+|-- mathsteps.js                        # 解題步驟產生器
+|-- NodeTypes.js                        # 解題步驟的資料型態
+|-- RuleTable.js                        # 規則表
+|-- test.ipynb                          # 程式碼測試
+|-- system_framework.png                # 系統架構圖
+|-- RuleTable.md                        # 規則表說明
+|-- README.md
+|-- 程式乾貨.docx
+```
+
 # [ 0424 ] 結合步驟解法分類
 
 ## 新增文件：
