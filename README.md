@@ -1,4 +1,4 @@
-# [ 0526 ] 將修改後的 V-MATHER 分類器與 EMA_with_mathsteps 結合
+# [ 0527 ] 將修改後的 V-MATHER 分類器與 EMA_with_mathsteps 結合
 
 ## EMA_with_mathsteps 檔案結構
 
